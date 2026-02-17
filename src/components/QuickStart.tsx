@@ -11,13 +11,15 @@ const steps = [
   {
     number: '02',
     title: 'Initialize Telemetry',
-    description: 'One line to set up tracing, audit logging, and optional cloud upload for your project.',
+    description: 'Set up nest_asyncio for Colab compatibility and initialize Agora tracing for your workflow.',
     code: `from agora.agora_tracer import init_agora
+import nest_asyncio
+
+nest_asyncio.apply()
 
 init_agora(
-    app_name="my-app",
-    project_name="My Project",
-    enable_cloud_upload=True
+    app_name="colab-demo",
+    enable_cloud_upload=False  
 )`,
   },
   {
@@ -26,23 +28,36 @@ init_agora(
     description: 'Use the @agora_node decorator to turn any async function into a traced workflow node.',
     code: `from agora.agora_tracer import agora_node
 
+@agora_node(name="FetchData")
+async def fetch_data(shared):
+    shared["data"] = shared.get("input", "hello world")
+    print(f"✓ Fetched: {shared['data']}")
+    return "process"
+
 @agora_node(name="ProcessData")
 async def process_data(shared):
-    shared["result"] = transform(shared["input"])
-    return "next"`,
+    shared["result"] = shared["data"].upper()
+    print(f"✓ Processed: {shared['result']}")
+    return "save"
+
+@agora_node(name="SaveResult")
+async def save_result(shared):
+    print(f"✅ Final Result: {shared['result']}")
+    return "complete"`,
   },
   {
     number: '04',
     title: 'Build & Run',
     description: 'Chain nodes into a flow with intuitive routing syntax, then run it. Telemetry is captured automatically.',
-    code: `from agora.agora_tracer import TracedAsyncFlow
+    code: `import asyncio
+from agora.agora_tracer import TracedAsyncFlow
 
 flow = TracedAsyncFlow("MyPipeline")
 flow.start(fetch_data)
 fetch_data - "process" >> process_data
 process_data - "save" >> save_result
 
-await flow.run_async({"input": "data"})`,
+await flow.run_async({"input": "hello from colab"})`,
   },
 ]
 
