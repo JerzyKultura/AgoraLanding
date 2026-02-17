@@ -42,7 +42,7 @@ async def process_data(shared):
 
 @agora_node(name="SaveResult")
 async def save_result(shared):
-    print(f"✅ Final Result: {shared['result']}")
+    print(f" Final Result: {shared['result']}")
     return "complete"`,
   },
   {
