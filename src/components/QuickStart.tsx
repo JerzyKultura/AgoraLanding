@@ -5,7 +5,8 @@ const steps = [
     number: '01',
     title: 'Install Agora',
     description: 'Install the framework with pip. Add the telemetry extra for OpenTelemetry and cloud platform support.',
-    code: 'pip install git+https://github.com/JerzyKultura/Agora.git[telemetry]',
+    code: `!pip install "git+https://github.com/JerzyKultura/Agora.git#egg=agora[telemetry]"
+!pip install nest-asyncio`,
   },
   {
     number: '02',
